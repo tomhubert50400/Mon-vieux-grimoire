@@ -12,7 +12,7 @@ router.post("/", auth, multer, (req, res) => {
 
   const bookData = req.body.book || req.body.Book;
   if (!bookData) {
-    return res.status(400).json({ error: "Missing book data" });
+    return res.status(400).json({ error: "Aucune donnée trouvée" });
   }
 
   let bookObject;
@@ -20,13 +20,13 @@ router.post("/", auth, multer, (req, res) => {
     bookObject = JSON.parse(bookData);
   } catch (error) {
     console.error("JSON parsing error:", error);
-    return res.status(400).json({ error: "Invalid JSON data" });
+    return res.status(400).json({ error: "Data JSON non valide" });
   }
 
   console.log("Parsed book object:", bookObject);
 
   if (!req.file) {
-    return res.status(400).json({ error: "Missing file data" });
+    return res.status(400).json({ error: "Données de fichier manquantes" });
   }
 
   const book = new Book({
@@ -38,7 +38,7 @@ router.post("/", auth, multer, (req, res) => {
 
   book
     .save()
-    .then(() => res.status(201).json({ message: "Book created!" }))
+    .then(() => res.status(201).json({ message: "Livré créé !" }))
     .catch((error) => {
       console.error("Error saving book:", error);
       res.status(400).json({ error });
@@ -50,19 +50,21 @@ router.post("/:id/rating", auth, async (req, res) => {
   try {
     const book = await Book.findById(req.params.id);
     if (!book) {
-      return res.status(404).json({ error: "Book not found" });
+      return res.status(404).json({ error: "Livre introuvable" });
     }
 
     const { userId, rating } = req.body;
 
     // Vérifiez que userId est fourni
     if (!userId) {
-      return res.status(400).json({ error: "userId is required" });
+      return res.status(400).json({ error: "un userId est nécéssaire" });
     }
 
     // Vérifiez que rating est fourni et valide
     if (rating === undefined || rating < 1 || rating > 5) {
-      return res.status(400).json({ error: "Valid rating (1-5) is required" });
+      return res
+        .status(400)
+        .json({ error: "Un note entre 1 et 5 est nécéssaire" });
     }
 
     // Vérifiez si l'utilisateur a déjà noté ce livre
@@ -103,7 +105,7 @@ router.get("/:id", (req, res) => {
   Book.findOne({ _id: req.params.id })
     .then((book) => {
       if (!book) {
-        return res.status(404).json({ error: "Book not found" });
+        return res.status(404).json({ error: "Livre introuvable" });
       }
       res.status(200).json(book);
     })
@@ -115,12 +117,12 @@ router.put("/:id", auth, multer, sharp, (req, res) => {
   let bookObject;
   if (req.file) {
     if (!req.body.book) {
-      return res.status(400).json({ error: "Missing book data" });
+      return res.status(400).json({ error: "Donnée du livre manquante" });
     }
     try {
       bookObject = JSON.parse(req.body.book);
     } catch (error) {
-      return res.status(400).json({ error: "Invalid JSON data" });
+      return res.status(400).json({ error: "Json invalide" });
     }
     bookObject.imageUrl = `${req.protocol}://${req.get("host")}/images/${
       req.file.filename
@@ -129,14 +131,14 @@ router.put("/:id", auth, multer, sharp, (req, res) => {
     bookObject = { ...req.body };
   }
   Book.updateOne({ _id: req.params.id }, { ...bookObject, _id: req.params.id })
-    .then(() => res.status(200).json({ message: "Book updated!" }))
+    .then(() => res.status(200).json({ message: "Livre mis à jour !" }))
     .catch((error) => res.status(400).json({ error }));
 });
 
 // Route pour supprimer un livre par ID
 router.delete("/:id", auth, (req, res) => {
   Book.deleteOne({ _id: req.params.id })
-    .then(() => res.status(200).json({ message: "Book deleted!" }))
+    .then(() => res.status(200).json({ message: "Livre supprimé !" }))
     .catch((error) => res.status(400).json({ error }));
 });
 

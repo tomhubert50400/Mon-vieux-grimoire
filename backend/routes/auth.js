@@ -15,7 +15,7 @@ router.post("/signup", (req, res) => {
       });
       user
         .save()
-        .then(() => res.status(201).json({ message: "User created!" }))
+        .then(() => res.status(201).json({ message: "Compté créé" }))
         .catch((error) => res.status(400).json({ error }));
     })
     .catch((error) => res.status(500).json({ error }));
@@ -26,13 +26,13 @@ router.post("/login", (req, res) => {
   User.findOne({ email: req.body.email })
     .then((user) => {
       if (!user) {
-        return res.status(401).json({ message: "User not found!" });
+        return res.status(401).json({ message: "Compte introuvable" });
       }
       bcrypt
         .compare(req.body.password, user.password)
         .then((valid) => {
           if (!valid) {
-            return res.status(401).json({ message: "Incorrect password!" });
+            return res.status(401).json({ message: "Mot de passe incorrect" });
           }
           const token = jwt.sign({ userId: user._id }, "RANDOM_TOKEN_SECRET", {
             expiresIn: "24h",

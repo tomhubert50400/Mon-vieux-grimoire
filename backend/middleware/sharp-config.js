@@ -16,9 +16,9 @@ module.exports = (req, res, next) => {
     .toFile(tempFilePath)
     .then(() => {
       console.log(`Image processed to temporary path: ${tempFilePath}`);
-      fs.renameSync(tempFilePath, outputPath); // Renommez le fichier temporaire vers le fichier final
+      fs.renameSync(tempFilePath, outputPath);
       console.log(`Image renamed to: ${outputPath}`);
-      fs.unlinkSync(req.file.path); // Supprimez le fichier original après transformation
+      fs.unlinkSync(req.file.path);
       console.log(`Original image file deleted: ${req.file.path}`);
       next();
     })
