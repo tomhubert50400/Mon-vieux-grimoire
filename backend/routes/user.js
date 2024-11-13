@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const auth = require("../middleware/auth"); // Middleware d'authentification
-const User = require("../models/user"); // Assurez-vous que le chemin est correct
+const auth = require("../middleware/auth");
+const User = require("../models/user");
 
 // Route pour récupérer tous les utilisateurs
 router.get("/", auth, async (req, res) => {
