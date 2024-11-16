@@ -8,6 +8,22 @@ const auth = require("./middleware/auth");
 const userRoutes = require("./routes/user");
 const path = require("path");
 const Book = require("./models/book");
+const dotenv = require("dotenv");
+
+// Configuration des variables d'environnement
+dotenv.config({ path: ".env" });
+dotenv.config({ path: ".env.local" });
+
+// reconstruire l'URI de connexion à MongoDB
+
+const MONGO_URI_TEMPLATE = process.env.MONGO_URI_TEMPLATE;
+const MONGO_USER = process.env.MONGO_USER;
+const MONGO_PASSWORD = process.env.MONGO_PASSWORD;
+
+const MONGO_URI = MONGO_URI_TEMPLATE.replace("{USER}", MONGO_USER).replace(
+  "{PASSWORD}",
+  MONGO_PASSWORD
+);
 
 app.use(express.json());
 app.use(
@@ -19,7 +35,7 @@ app.use(
 );
 
 mongoose
-  .connect("mongodb+srv://tomhrt50:Tomhubert93@cluster0.g2ibet6.mongodb.net/")
+  .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("Could not connect to MongoDB...", err));
 
